@@ -1,5 +1,7 @@
 # 201600181058ZhangDuo-
 IR &amp; DM 
+
+
 2018/9/22 *The First Update
 A few days ago I downloaded the news dataset from the given website. And the first I thought was to use the python os module to process the files and read them as a long list made up by the word strings. Afterwards, I could process them and build the word dictionary and derive the statistical information. However, it didn’t work as I expected. When I try to open the files and read them,error occurred as the picture below.
 
