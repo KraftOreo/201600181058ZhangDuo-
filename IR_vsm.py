@@ -3,24 +3,17 @@ import sys
 import chardet
 import codecs
 from bs4 import BeautifulSoup
-from gensim import corpora, models, similarities
+from gensim import corpora, models  # similarities
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 
 
+# derive the encoding format of the data
 def get_encoding(file):
     # 二进制方式读取，获取字节数据，检测类型
     with open(file, 'rb') as f:
         return chardet.detect(f.read())['encoding']
-
-
-def Decode_Content(contents):
-    new_contents = []
-    for content in contents:
-        content = content.decode()
-        new_contents.append(content)
-    return new_contents
 
 
 # of no need
@@ -39,6 +32,7 @@ def change_the_suffixName(path0, path1):
             os.rename(filenamedir, newnamedir)
 
 
+# read files and decode them
 def read_and_decode_content(path):
     new_contents = []
     files = os.listdir(path)
@@ -66,7 +60,7 @@ def convert_file_to_utf8(filename):
         content = content.decode(source_encoding, 'ignore')  # .encode(source_encoding)
         codecs.open(filename, 'w', encoding='UTF-8-SIG').write(content)
 
-
+# so you can use the function to clear the useless url information with BeautifulSoup form bs4
 def convert_file_to_html(filename):
     # !!! does not backup the origin file
     content = codecs.open(filename, 'rb').read()
@@ -79,7 +73,7 @@ def convert_file_to_html(filename):
         content = content.decode(source_encoding, 'ignore')  # .encode(source_encoding)
         codecs.open(filename, 'w', encoding='UTF-8').write(content)
 
-
+# the overall dataset
 def build_dataset(path):
     dirs = os.listdir(path)
     contents = []
@@ -96,7 +90,7 @@ def build_dataset(path):
                         contents.append(decoded_content)
     return contents
 
-
+#build every single species dataset
 def build_classification_dataset(path):
     contents = []
     files = os.listdir(path)
@@ -111,7 +105,7 @@ def build_classification_dataset(path):
                     contents.append(decoded_content)
     return contents
 
-
+#dataset of every file
 def build_small_dataset(path):
     contents = []
     with open(path, 'rb') as text:
@@ -125,7 +119,7 @@ def build_small_dataset(path):
 
     return contents
 
-
+#clean the data by delete the '\n'
 def wash_data(dataset):
     new_dataset = []
     for data in dataset:
@@ -138,7 +132,7 @@ def wash_data(dataset):
 
     return new_dataset
 
-
+#to derive a better and cleaner dataset
 def data_processing(dataset):
     dataset_lower = [data.lower() for data in dataset]
     dataset_tokenized = [word_tokenize(data) for data in dataset_lower]
@@ -196,4 +190,4 @@ if __name__ == '__main__':
         dataset = wash_data(build_classification_dataset(path + '\\' + dir))
         dict2 = build_vs_model(dataset)
         with open('Results3.txt', 'a')as f:
-            f.write(dict2,'\n')
+            f.write(dict2, '\n')
