@@ -98,4 +98,11 @@ if __name__ == '__main__':
         path_to_test[dir] = test_path  # 添加路径到字典
     for i in dataset_overall:
         i['dataset'] = data_processing(i['dataset'])
-        
+        print(len(i['dataset'][0]))
+        dict = {}
+        for j in i['dataset'][0]:
+            if j not in dict.keys():
+                dict[j] = 1
+            else:
+                dict[j] += 1
+        i['dataset'] = dict
