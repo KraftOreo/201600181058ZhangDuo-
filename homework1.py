@@ -78,13 +78,6 @@ def data_processing(dataset):
     return dataset_stemmed
 
 
-def build_vs_model(dataset):
-    data_processed = data_processing(dataset)
-    dataset_stemmed = data_stemming(data_processed)
-    corpus, dictionary = build_corpus(dataset_stemmed)
-    return dictionary, corpus
-
-
 if __name__ == '__main__':
     path = "C:\\Users\\97653\\Desktop\\人工智能\\IR&DM\\20news-19997\\20_newsgroups"  # 文件路径
     dataset_overall = []  # 创建空列表来存放数据集
