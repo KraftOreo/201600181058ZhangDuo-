@@ -5,6 +5,7 @@ from nltk.stem.porter import PorterStemmer
 from math import log
 
 
+# 获取推特文件
 def get_data(path):
     tweets = []
     with open(path, 'r') as f:
@@ -16,6 +17,7 @@ def get_data(path):
     return tweets
 
 
+# 文本处理
 def data_processing(dataset):
     dataset_lower = [data.lower() for data in dataset]
     dataset_tokenized = [word_tokenize(data) for data in dataset_lower]
@@ -29,12 +31,14 @@ def data_processing(dataset):
     return dataset_with_no_punctuations
 
 
+# 词干化
 def data_stemming(dataset):
     ps = PorterStemmer()
     dataset_stemmed = [ps.stem(word) for word in dataset]
     return dataset_stemmed
 
 
+# 获取tweet文本
 def dict_construction(path):
     tweets = get_data(path)
     content = []
@@ -50,6 +54,7 @@ def dict_construction(path):
     return content, tweetId
 
 
+# 构建inverted_index
 def build_inverted_index(tweets):
     dict_inv = {}
     for i in tweets:
@@ -61,6 +66,7 @@ def build_inverted_index(tweets):
     return dict_inv
 
 
+# 用and 的方式合并query里每一个词的inverted_index
 def merge(dict_inv, query):
     query = query_process(query)
     merge_list = []
@@ -81,6 +87,7 @@ def merge(dict_inv, query):
     return merge_list[0]
 
 
+# 用or 的方式合并query里每一个词的inverted_index
 def MERGE(dict_inv, query):
     query = query_process(query)
     merge_list = []
@@ -91,26 +98,14 @@ def MERGE(dict_inv, query):
     return merge_list
 
 
-def OR(dict_inv, word1, word2):
-    list1 = dict_inv[word1]
-    list2 = dict_inv[word2]
-    not_list = [word for word in list1 if word in list2]
-    return not_list
-
-
-def NOT(dict_inv, word1, word2):
-    list1 = dict_inv[word1]
-    list2 = dict_inv[word2]
-    or_list = [word for word in list1 if word not in list2]
-    return or_list
-
-
+# 处理query
 def query_process(query):
     query = data_processing([query])[0]
     query = data_stemming(query)
     return query
 
 
+# 获取query里的词频
 def c(word, query):
     count = 0
     for i in query:
@@ -119,11 +114,13 @@ def c(word, query):
     return count
 
 
+# 获取大字典里的词频
 def df(word, dict_inv, M):
     DF = len(dict_inv[word])
     return DF
 
 
+# 用pivoted的方法对搜索结果排序取最好的结果
 def pivoted_sort_by_similarity(result, query, tweets, dict_inv, tweetid):
     M = len(tweets)
     b = 0.1
@@ -153,6 +150,7 @@ def pivoted_sort_by_similarity(result, query, tweets, dict_inv, tweetid):
     return ANSWER
 
 
+# 用bm25的方法对搜索结果排序取最好的结果
 def bm25_sort_by_similarity(result, query, tweets, dict_inv, tweetid):
     M = len(tweets)
     b = 0.1
@@ -184,6 +182,7 @@ def bm25_sort_by_similarity(result, query, tweets, dict_inv, tweetid):
     return ANSWER
 
 
+# 获取所有query
 def get_query():
     contents = []
     with open('Q.txt') as f:
@@ -202,16 +201,18 @@ def get_query():
 
 
 if __name__ == '__main__':
+    # 构建inverted_index并保存起来
     path = 'tweets.txt'
     tweets, tweetid = dict_construction(path)
-    print(len(tweetid))
     # dict_inv = build_inverted_index(tweets)
     # with open('inverted_index.json', 'w') as file_out:
     #     json.dump(dict_inv, file_out, indent=4)
+    # 读取字典
     with open('inverted_index.json', 'r') as file_in:
         # content = file_in.readlines()
         dict_inv = json.load(file_in)
     queries = get_query()
+    # 对每一个query进行检验并按规定格式输出
     for query in queries:
         result = merge(dict_inv, query)
         print(result)
